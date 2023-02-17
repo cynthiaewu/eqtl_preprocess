@@ -37,7 +37,7 @@ def main():
     parser.add_argument("-g", "--genotype", required=True, help="Input genotype file")
     parser.add_argument("-e", "--expression", required=True, help="Input expression file")
     parser.add_argument("-c", "--covariates", required=True, help="Input covariates file")
-    parser.add_argument("-i", "--geno_out", required=True, help="Output genotype file of intersecting samples")
+    parser.add_argument("-o", "--geno_out", required=True, help="Output genotype file of intersecting samples")
     parser.add_argument("-p", "--express_out", required=True, help="Output expression file with intersecting samples")
     parser.add_argument("-q", "--cov_out", required=True, help="Output covariates file with intersecting samples")
     params = parser.parse_args()
