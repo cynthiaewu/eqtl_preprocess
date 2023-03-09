@@ -25,6 +25,7 @@ def elasticnet(gene_cisqtls_ldprune, expression, genotype):
             except:
                 num_warnings += 1
             else:
+                X = X.astype(np.float64)
                 pred = fit.predict(X)
                 residuals = Y - pred
                 expression.loc[gene] = residuals
