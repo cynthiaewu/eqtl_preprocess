@@ -1,6 +1,6 @@
 # eqtl_preprocess
 
-## Filter genotype with 
+## Filter SNP genotype with 
 * include sites with minor allele frequency>0.1
 * include only sites in exons and TSS +/- 3kb of protein coding genes
 * exclude sites that has more than 0.8 missing data 
@@ -9,6 +9,17 @@
 ```
 bash genotype_filtering.sh $genotype $geno_label
 ```
+
+## Filter STR genotype with 
+* include sites with heterozygousity>0.1
+* include only sites in exons and TSS +/- 3kb of protein coding genes
+* exclude sites that has more than 0.8 missing data 
+* exclude sites that fall in segmental duplication regions
+
+```
+bash genotype_filtering.sh $genotype $geno_label
+```
+
 ## Filter and preprocess expression dataset
 1. Apply filtering steps
   * include protein coding genes only
