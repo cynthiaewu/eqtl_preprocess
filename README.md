@@ -9,6 +9,18 @@
 ```
 bash genotype_filtering.sh $genotype $geno_label
 ```
+$genotype is the genotype file in 012 format for all SNPs
+
+$geno_label is the label subsequent files are named. e.g. 'IL_LHb_NAcc_OFC_PL'
+
+## Format STR genotypes
+1. Format STR genotypes as dosages (repeat numbers added up for both alleles)
+```
+formatSTRgenotype.py --genotype --geno_out
+```
+--genotype is the .GB.FORMAT file from plink for STR
+
+--geno_out is the formatted STR genotype file
 
 ## Filter STR genotype with 
 * include sites with heterozygousity>0.1
@@ -17,8 +29,11 @@ bash genotype_filtering.sh $genotype $geno_label
 * exclude sites that fall in segmental duplication regions
 
 ```
-bash genotype_filtering.sh $genotype $geno_label
+bash genotype_filtering.sh $input_folder $output_folder
 ```
+$input_folder is the folder that contains all formatted STR genotype files separated by chromosomes
+
+$output_folder is the folder to write output to
 
 ## Filter and preprocess expression dataset
 1. Apply filtering steps
@@ -32,6 +47,9 @@ bash genotype_filtering.sh $genotype $geno_label
 ```
 bash expression_pipeline.sh $expression $expr_label
 ```
+$expression is the expression file 
+
+$expr_label is the label subsequent files are named. e.g. 'OFC'
 
 ## Regressing out cis effects and Matrix-eQTL
 
@@ -41,3 +59,16 @@ bash expression_pipeline.sh $expression $expr_label
 ```
 bash cisregress_matrixeqtl.sh $genotype $expression $covariates $output $snploc $geneloc $genotype_segments
 ```
+$genotype is the genotype file
+
+$expression is the expression file
+
+$covariates is the covariates file
+
+$output is the location to write output files
+
+$snploc is the file with the locations of variants in format 'snp chr pos'
+
+$geneloc is the file with the locations of genes in format 'geneid chr pos1 pos2'
+
+$genotype_segments is the path to the folder where genotype files are broken into files of 500 variants
