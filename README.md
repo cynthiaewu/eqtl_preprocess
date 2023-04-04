@@ -13,15 +13,6 @@ $genotype is the genotype file in 012 format for all SNPs
 
 $geno_label is the label subsequent files are named. e.g. 'IL_LHb_NAcc_OFC_PL'
 
-## Format STR genotypes
-1. Format STR genotypes as dosages (repeat numbers added up for both alleles)
-```
-formatSTRgenotype.py --genotype --geno_out
-```
---genotype is the .GB.FORMAT file from plink for STR
-
---geno_out is the formatted STR genotype file
-
 ## Filter STR genotype with 
 * include sites with heterozygousity>0.1
 * include only sites in exons and TSS +/- 3kb of protein coding genes
@@ -33,7 +24,7 @@ bash genotype_filtering.sh $input_folder $output_folder
 ```
 $input_folder is the folder that contains all formatted STR genotype files separated by chromosomes
 
-$output_folder is the folder to write output to
+$output_folder is the folder to write output to. STR genotypes are given as dosages (repeat numbers added up for both alleles)
 
 ## Filter and preprocess expression dataset
 1. Apply filtering steps
