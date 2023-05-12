@@ -1,6 +1,6 @@
 # eqtl_preprocess
 
-## Filter genotype with 
+## Filter SNP genotype with 
 * include sites with minor allele frequency>0.1
 * include only sites in exons and TSS +/- 3kb of protein coding genes
 * exclude sites that has more than 0.8 missing data 
@@ -9,6 +9,23 @@
 ```
 bash genotype_filtering.sh $genotype $geno_label
 ```
+$genotype is the genotype file in 012 format for all SNPs
+
+$geno_label is the label subsequent files are named. e.g. 'IL_LHb_NAcc_OFC_PL'
+
+## Filter STR genotype with 
+* include sites with heterozygousity>0.1
+* include only sites in exons and TSS +/- 3kb of protein coding genes
+* exclude sites that has more than 0.8 missing data 
+* exclude sites that fall in segmental duplication regions
+
+```
+bash genotype_filtering.sh $input_folder $output_folder
+```
+$input_folder is the folder that contains all formatted STR genotype files separated by chromosomes
+
+$output_folder is the folder to write output to. STR genotypes are given as dosages (repeat numbers added up for both alleles)
+
 ## Filter and preprocess expression dataset
 1. Apply filtering steps
   * include protein coding genes only
@@ -21,6 +38,9 @@ bash genotype_filtering.sh $genotype $geno_label
 ```
 bash expression_pipeline.sh $expression $expr_label
 ```
+$expression is the expression file 
+
+$expr_label is the label subsequent files are named. e.g. 'OFC'
 
 ## Regressing out cis effects and Matrix-eQTL
 
@@ -30,3 +50,16 @@ bash expression_pipeline.sh $expression $expr_label
 ```
 bash cisregress_matrixeqtl.sh $genotype $expression $covariates $output $snploc $geneloc $genotype_segments
 ```
+$genotype is the genotype file
+
+$expression is the expression file
+
+$covariates is the covariates file
+
+$output is the location to write output files
+
+$snploc is the file with the locations of variants in format 'snp chr pos'
+
+$geneloc is the file with the locations of genes in format 'geneid chr pos1 pos2'
+
+$genotype_segments is the path to the folder where genotype files are broken into files of 500 variants
