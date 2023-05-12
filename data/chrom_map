@@ -18,6 +18,8 @@ chr17 17
 chr18 18
 chr19 19
 chr20 20
+chrX X
+chrY Y
 1 chr1
 2 chr2
 3 chr3
@@ -38,3 +40,5 @@ chr20 20
 18 chr18
 19 chr19
 20 chr20
+X chrX
+Y chrY

@@ -25,7 +25,7 @@ pvOutputThreshold_tra = 5e-2;
 #pvOutputThreshold = 1;
 
 # Distance for local gene-SNP pairs
-cisDist = 1e6;
+cisDist = 5e6;
 errorCovariance = numeric();
 
 snps = SlicedData$new();

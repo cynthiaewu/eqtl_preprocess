@@ -1,15 +1,15 @@
 library(peer)
 
 args = commandArgs(trailingOnly = TRUE)
-foldernm = args[1]
-expr_file = args[2]
-prefix_file = args[3]
+#foldernm = args[1]
+expr_file = args[1]
+prefix_file = args[2]
 
-filenm = paste(foldernm, "/", expr_file, sep = "")
-factorsnm = paste(foldernm, "/", prefix_file, "_peer_factors.tsv", sep = "")
-weightsnm = paste(foldernm, "/", prefix_file,  "_peer_weights.tsv", sep = "")
-precisionnm = paste(foldernm, "/", prefix_file, "_peer_precision.tsv", sep = "")
-residualsnm = paste(foldernm, "/", prefix_file, "_peer_residuals.tsv", sep = "")
+filenm = expr_file
+factorsnm = paste(prefix_file, "_peer_factors.tsv", sep = "")
+weightsnm = paste(prefix_file,  "_peer_weights.tsv", sep = "")
+precisionnm = paste(prefix_file, "_peer_precision.tsv", sep = "")
+residualsnm = paste(prefix_file, "_peer_residuals.tsv", sep = "")
 
 expr = read.csv(filenm, header = TRUE, row.names = 1, sep='\t')
 expr = t(expr)

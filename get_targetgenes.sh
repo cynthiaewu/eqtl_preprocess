@@ -8,7 +8,7 @@ xqtl_results=$3
 top_n=$4
 output=$5
 
-var=`sort -rgk 4,4 "${xqtl_results}" | grep -v 'nan' | head -n 10 | awk -F'\t' '{print $1}'`
+var=`sort -rgk 4,4 "${xqtl_results}" | grep -v 'nan' | head -n "${top_n}" | awk -F'\t' '{print $1}'`
 for i in $var;
 do
     for fn in `find "${input_geno}" -type f -name "genotype_*"`;

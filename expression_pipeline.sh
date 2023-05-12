@@ -21,8 +21,9 @@ python filter_expression.py -f "${expr_label}.expr.tpm.rename.nosegdups.bed" -o 
 
 echo "Finished filtering"
 echo "Starting PEER"
-path=`pwd`
-Rscript run_PEER.r "$path" "${expr_label}.expr_filter_normalize_inverse_proteincoding_nosegdups.tsv" "${expr_label}_expr_filter_normalize_inverse_proteincoding_nosegdups"
+#path=`pwd`
+#path="$(dirname "${input}")echo $path
+Rscript run_PEER.r "${expr_label}.expr_filter_normalize_inverse_proteincoding_nosegdups.tsv" "${expr_label}_expr_filter_normalize_inverse_proteincoding_nosegdups"
 
 sed -i -e '1 s/"X//g' -e 's/"//g' "${expr_label}_expr_filter_normalize_inverse_proteincoding_nosegdups_peer_residuals.tsv"
  

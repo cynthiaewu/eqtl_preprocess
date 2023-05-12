@@ -76,13 +76,17 @@ def filter_expr(fname, output, prefix):
     #calculate mean, variance, dispersion
     mean = []
     variance = []
+    median = []
+    max_tpm = []
     for index, gene in expr.iterrows():
         mean.append(np.mean(gene))
         variance.append(np.var(gene))
+        median.append(np.median(gene))
+        max_tpm.append(max(gene))
         
-    gene_info = [list(expr.index), mean, variance]
+    gene_info = [list(expr.index), mean, variance, median, max_tpm]
     gene_info = pd.DataFrame(gene_info).T
-    gene_info.columns = ['gene', 'mean', 'variance']
+    gene_info.columns = ['gene', 'mean', 'variance', 'median', 'max_tpm']
     gene_info["disp"] = gene_info.apply(lambda x: x["variance"]/x["mean"], 1)
     
     #calculate iqr
@@ -91,11 +95,11 @@ def filter_expr(fname, output, prefix):
         iqr.append(find_iqr(values))
     gene_info.insert(4, 'iqr', iqr)
 
-    gene_info_filter = gene_info[(gene_info['variance']>0) & (gene_info['iqr']>0)]
+    gene_info_filter = gene_info[(gene_info['variance']>0) & (gene_info['variance']<50000) & (gene_info['iqr']>0) & (gene_info['median']>0) & (gene_info['max_tpm']>2)]
     expr_filter = expr.loc[gene_info_filter['gene']]
     num_filtered_genes = expr_filter.shape[0]
-    print(f'Filtered {num_genes-num_filtered_genes} genes with variance < 0 and iqr < 0')
-    log.write(f'Filtered {num_genes-num_filtered_genes} genes with variance < 0 and iqr < 0\n')
+    print(f'Filtered {num_genes-num_filtered_genes} genes with variance > 0, variance < 50000, iqr < 0, median > 0, and max_tpm > 2')
+    log.write(f'Filtered {num_genes-num_filtered_genes} genes with variance > 0, variance < 50000, iqr < 0, median > 0, and max_tpm > 2\n')
     num_genes = num_filtered_genes
 
     #keep only protein coding genes and filter out AABR0 genes
@@ -150,7 +154,7 @@ def filter_expr(fname, output, prefix):
     '''
 
     #calculate gene correlation and filter correlated genes
-    expr_corr = expr_filter.T.corr(method='pearson')
+    expr_corr = expr_filter.T.corr(method='spearman')
     np.fill_diagonal(expr_corr.values, np.nan)
     s = expr_corr.abs().unstack()
     so = s.sort_values(kind="quicksort")
@@ -172,6 +176,32 @@ def filter_expr(fname, output, prefix):
     num_filtered_genes = expr_filter.shape[0]
     print(f'Filtered {num_genes-num_filtered_genes} highly correlated genes')
     log.write(f'Filtered {num_genes-num_filtered_genes} highly correlated genes\n')
+    num_genes = num_filtered_genes
+
+    #filter out genes with high heterozygousity
+    hetrates = pd.read_csv('/storage/cynthiawu/trans_eQTL/RatGTEx/Rerun011123/Scripts/rat-gtex-analysis/preprocessing/blacklist_regions/gene_het_filter', sep='\t')
+    hetrates["gene.len"] = hetrates["end"]-hetrates["start"]
+    hetrates["snps.per.bp"] = hetrates.apply(lambda x: x["numsnps"]*1.0/x["gene.len"], 1)
+    hetrates["hets.per.bp"] = hetrates.apply(lambda x: x["numhets"]*1.0/x["gene.len"], 1)
+    hetrates_filtered_expr = hetrates[hetrates['gene'].isin(list(expr_filter.index))]
+    total_het = 0
+    total_len = 0
+    for index, row in hetrates_filtered_expr.iterrows():
+        total_het += row['numhets']
+        total_len += row['gene.len']
+    overall_p = total_het/total_len
+    all_p = []
+    for index, row in hetrates_filtered_expr.iterrows():
+        all_p.append(stats.binom_test(row['numhets'], n=row['gene.len'], p=overall_p, alternative='greater'))
+    all_p_corrected = [min(i * len(hetrates_filtered_expr), 1) for i in all_p]
+    hetrates_filtered_expr.insert(12, 'p-val', all_p)
+    hetrates_filtered_expr.insert(13, 'p-val_corrected', all_p_corrected)
+    hetrates_filtered_expr_passgenes = hetrates_filtered_expr[hetrates_filtered_expr['p-val_corrected'] >= 0.05]
+    expr_filter = expr_filter[expr_filter.index.isin(list(hetrates_filtered_expr_passgenes['gene']))]
+    num_filtered_genes = expr_filter.shape[0]
+    print(f'Filtered {num_genes-num_filtered_genes} genes with high heterozygosity')
+    log.write(f'Filtered {num_genes-num_filtered_genes} genes with high heterozygosity\n')
+   
     num_genes = num_filtered_genes
     print(f'Left with {num_genes} genes')
     log.write(f'Left with {num_genes} genes')
